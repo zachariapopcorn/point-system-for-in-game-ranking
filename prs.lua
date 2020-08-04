@@ -8,6 +8,9 @@ local key = 'key'
 
 -- Standard Variables --
 local HttpService = game:GetService('HttpService')
+local dbService = game:GetService('DataStoreService')
+local pointDb = dbService:GetDataStore("points")
+
 -- Standard Variables --
 
 -- Main Code --
@@ -24,7 +27,7 @@ while true do
 	end
 	for i, v in pairs(arr) do
 		if(v.pointValue >= pointValueForPromote) then
-			print('Sending promote request to server...')
+			print('Sending promote request to server for ' .. v.plrName .. '...')
 			local plrName = v.plrName
 			local plrObj = game.Players:FindFirstChild(plrName)
 			local res
@@ -34,6 +37,8 @@ while true do
 			if(err) then
 				warn("There was an error while trying to connect to the server! Here's the error message: " .. err)
 			else
+				plrObj.leaderstats.Points.Value = 0
+				pointDb:SetAsync(plrObj.UserId .. '-points', plrObj.leaderstats.Points.Value)
 				print("Sent promote request! Here's the response from the server: " .. res)
 			end
 		end
